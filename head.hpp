@@ -18,12 +18,12 @@ int cur_date = 2;//1 by default, editable
 
 class record {
 public:
-    string guest_name ;
-    string guest_tel ;
+    string guest_name;
+    string guest_tel;
     int in_date;
     int out_date;
-    double fee ;
-    record(){};
+    double fee;
+    record() {};
 };
 
 bool compare_in_date(record& a, record& b);
@@ -33,7 +33,7 @@ public:
     int floor = 0;
     int number = 0;
     int type = 0;
-    bool isCheckedin=false;
+    bool isCheckedin = false;
     //int state=0;//1: occupied; 2: reserved; 0: vacant
     // room(int f,int n,int t,string nm,string tel,int in,int out){        //有房客信息调用的构造函数
     //     floor=f;
@@ -70,10 +70,10 @@ public:
         if (rlist.empty())
             return 0;
         bool availiability = false;
-        bool future_record_availibility=false;
+        bool future_record_availibility = false;
         list<record>::iterator it = rlist.begin();
         while (it != rlist.end()) {
-            if (it->in_date <= cur_date&&cur_date < it->out_date) {
+            if (it->in_date <= cur_date && cur_date < it->out_date) {
                 return 1;
             }
             if (it->out_date == cur_date) {
@@ -167,7 +167,7 @@ public:
         }
         return true;
     }
-    
+
     bool push_record(record d) {
         rlist.push_back(d);
         //rlist.sort(compare_in_date);
@@ -177,19 +177,34 @@ public:
         rlist.clear();
     }
 
-    pair<int,int> checkinAvailibility(string name,string tel){
-        list<record>::iterator it=rlist.begin();
-        pair<int,int> return_val(0,0);
-        while(it!=rlist.end()){
-            if(name==it->guest_name&&tel==it->guest_tel){
-                if(it->in_date<=cur_date&&it->out_date>cur_date){
-                    return_val.first=it->in_date;return_val.second=it->out_date;
+    pair<int, int> checkinAvailibility(string name, string tel) {
+        list<record>::iterator it = rlist.begin();
+        pair<int, int> return_val(0, 0);
+        while (it != rlist.end()) {
+            if (name == it->guest_name && tel == it->guest_tel) {
+                if (it->in_date <= cur_date && it->out_date > cur_date) {
+                    return_val.first = it->in_date; return_val.second = it->out_date;
                     return return_val;
                 }
             }
             it++;
         }
         return return_val;
+    }
+
+    int records_count() {
+        return rlist.size();
+    }
+    bool write_records_to_file(ofstream& fs) {
+        list<record>::iterator it = rlist.begin();
+        while (it != rlist.end()) {
+            fs << it->guest_name << endl;
+            fs << it->guest_tel << endl;
+            fs << it->in_date << endl;
+            fs << it->out_date << endl;
+            it++;
+        }
+        return true;
     }
 protected:
     // string guest_name=0;

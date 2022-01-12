@@ -4,6 +4,7 @@
 using namespace std;
 
 //undefined rooms are set as Standard by default
+bool write_to_file(list<room>& data);
 
 const int floors = 5;
 const int rpf = 10;
@@ -13,7 +14,7 @@ int alt_count = 0;    //availiable later today
 bool read_from_file(list<room>& data)
 {
     ifstream fs;
-    fs.open("data.txt"); //文件流打开并读取酒店房间信息
+    fs.open("data.txt",ios::in); //文件流打开并读取酒店房间信息
     room temp;
     room d_room;
     d_room.type = 1;
@@ -55,7 +56,7 @@ bool read_from_file(list<room>& data)
         }
 
         temp.type = stoi(buffer);
-        
+
         getline(fs, buffer);
         rcount = stoi(buffer);
 
@@ -112,23 +113,45 @@ bool read_from_file(list<room>& data)
     return true;
 }
 
-bool checkin(list<room> &data){
-    system("cls");
-    string name; string tel;
-    cout<<"Please fill in your following information"<<endl<<endl;
-    cout<<"Name: "; cin>>name;
-    cout<<"Telephone number: ";cin>>tel;
-    list<room>::iterator it=data.begin();
-
-    pair<int,int> in_out;
-    while(it!=data.end()){
-        if(it->isCheckedin){
+bool write_to_file(list<room>& data) {
+    ofstream fs("data.txt",ios::out);
+    list<room>::iterator it = data.begin();
+    int ct = 0;
+    while (it != data.end()) {
+        fs << it->floor << endl << it->number << endl;
+        fs << it->type << endl;
+        ct = it->records_count();
+        fs << ct << endl;
+        if (ct == 0) {      //0条记录，则当前房间信息写入结束
+            fs << endl;
             it++;
             continue;
         }
-        in_out=it->checkinAvailibility(name,tel);
-        if(in_out.first!=0){
-            if(it->isCheckedin){
+        it->write_records_to_file(fs);
+        fs << endl;
+        it++;
+    }
+    fs.close();
+    return true;
+}
+
+bool checkin(list<room>& data) {
+    system("cls");
+    string name; string tel;
+    cout << "Please fill in your following information" << endl << endl;
+    cout << "Name: "; cin >> name;
+    cout << "Telephone number: "; cin >> tel;
+    list<room>::iterator it = data.begin();
+
+    pair<int, int> in_out;
+    while (it != data.end()) {
+        if (it->isCheckedin) {
+            it++;
+            continue;
+        }
+        in_out = it->checkinAvailibility(name, tel);
+        if (in_out.first != 0) {
+            if (it->isCheckedin) {
                 return false;       //顾客今天已入住
             }
             return true;            //找到顾客预约记录
@@ -153,7 +176,7 @@ void menu() {
     cout << "Press 5 to manage the hotel system (admin only)" << endl << endl;
     cout << "Currently availiable rooms: " << vacant_count << "\t\tRooms availiable after 12:00 PM: " << alt_count << endl;
     int option;
-    cin>>option;
+    cin >> option;
     switch (option)
     {
     case 1:
@@ -174,11 +197,9 @@ void menu() {
 int main()
 {
     list<room> data;
-    if (!read_from_file(data))
-    {
-        //显示读取信息错误提示
-    }
-    menu();
+    read_from_file(data);
+    cout << "test" << endl;
+    write_to_file(data);
     cout << "project test output..." << endl;
     return 0;
 }
