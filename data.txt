@@ -1,0 +1,26 @@
+1       //floor
+1       //number
+1       //type
+1       //records count
+name    //guest name
+123     //tel
+1       //in date
+2       //out date
+
+2       //floor
+4       //number
+1       //type
+0       //no record
+
+3       //floor
+10      //number
+2       //type
+2       //state, occupied
+name    //guest name
+123     //tel
+4       //in date
+6       //out date
+name2   //guest name
+456     //tel
+7       //in date
+8       //out date
